@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Consultar Disponibilidad</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+  <div class="container mt-5">
+    <div class="card shadow">
+      <div class="card-header bg-info text-white">
+        <h3 class="card-title mb-0">Consultar Disponibilidad de Habitaciones</h3>
+      </div>
+      <div class="card-body">
+        <form id="disponibilidad-form" class="row g-3">
+          <div class="col-md-5">
+            <label for="fechaEntrada" class="form-label">Fecha de Entrada</label>
+            <input type="date" class="form-control" id="fechaEntrada" required />
+          </div>
+          <div class="col-md-5">
+            <label for="fechaSalida" class="form-label">Fecha de Salida</label>
+            <input type="date" class="form-control" id="fechaSalida" required />
+          </div>
+          <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Buscar</button>
+          </div>
+        </form>
+
+        <div class="mt-4">
+          <h4>Habitaciones Libres</h4>
+          <div class="table-responsive">
+            <table class="table table-striped table-bordered align-middle">
+              <thead class="table-dark text-center">
+                <tr>
+                  <th>ID</th>
+                  <th>Número</th>
+                  <th>Tipo</th>
+                  <th>Capacidad</th>
+                  <th>Precio / Noche</th>
+                  <th>Estado Actual</th>
+                </tr>
+              </thead>
+              <tbody id="disponibles-table-body">
+                <tr><td colspan="6" class="text-center text-muted">Selecciona las fechas para consultar.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-3">
+          <a href="ver_reservas.html" class="btn btn-secondary">Volver a Reservas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('disponibilidad-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const entrada = document.getElementById('fechaEntrada').value;
+      const salida = document.getElementById('fechaSalida').value;
+
+      fetch(`http://localhost:3000/api/reservas/disponibilidad?fechaEntrada=${entrada}&fechaSalida=${salida}`)
+        .then(response => response.json())
+        .then(habitaciones => {
+          const tableBody = document.getElementById('disponibles-table-body');
+          tableBody.innerHTML = '';
+          if (habitaciones.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">No hay habitaciones disponibles para este rango de fechas.</td></tr>';
+            return;
+          }
+          habitaciones.forEach(h => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td class="text-center">${h.idHabitacion}</td>
+              <td class="fw-bold text-center">${h.numeroHabitacion}</td>
+              <td>${h.tipo}</td>
+              <td class="text-center">${h.capacidad} pers.</td>
+              <td class="text-end">$${parseFloat(h.precioNoche).toLocaleString('es-CO')}</td>
+              <td class="text-center"><span class="badge bg-success">${h.estado}</span></td>
+            `;
+            tableBody.appendChild(row);
+          });
+        })
+        .catch(err => console.error('Error al consultar disponibilidad:', err));
+    });
+  </script>
+</body>
+</html>
