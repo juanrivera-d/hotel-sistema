@@ -3,41 +3,65 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Nueva Reserva</title>
+  <title>Nueva Reserva - Hotel Leyton</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="bg-light">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="ver_reservas.html">Reservas</a></li>
+          <li class="nav-item"><a class="nav-link active" href="crear_reserva.html">Nueva Reserva</a></li>
+          <li class="nav-item"><a class="nav-link" href="disponibilidad.html">Disponibilidad</a></li>
+          <!-- Agrega aquí los links de habitaciones, usuarios, pagos y servicios cuando estén listos -->
+        </ul>
+      </div>
+      <a class="navbar-brand fw-bold fs-4 ms-auto" href="index.html">🏨 Leyton</a>
+    </div>
+  </nav>
+
   <div class="container mt-5">
-    <h2 class="text-center mb-4">Crear Nueva Reserva</h2>
-    <p class="text-muted text-center">
-      Por ahora usamos ID numérico para usuario y habitación (aún no están listos los endpoints
-      de Santiago y Javier). Más adelante estos campos se reemplazan por listas desplegables.
-    </p>
-    <form id="reserva-form">
-      <div class="mb-3">
-        <label for="idUsuario" class="form-label">ID del huésped (usa 1, 2 o 3 de los datos de prueba)</label>
-        <input type="number" class="form-control" id="idUsuario" required />
+    <div class="card shadow">
+      <div class="card-header bg-primary text-white">
+        <h3 class="card-title mb-0">Crear Nueva Reserva</h3>
       </div>
-      <div class="mb-3">
-        <label for="idHabitacion" class="form-label">ID de la habitación (usa 1, 2 o 3 de los datos de prueba)</label>
-        <input type="number" class="form-control" id="idHabitacion" required />
+      <div class="card-body">
+        <p class="text-muted text-center">
+          Por ahora usamos ID numérico para usuario y habitación (aún no están listos los endpoints
+          de Santiago y Javier). Más adelante estos campos se reemplazan por listas desplegables.
+        </p>
+        <form id="reserva-form">
+          <div class="mb-3">
+            <label for="idUsuario" class="form-label">ID del huésped (usa 1, 2 o 3 de los datos de prueba)</label>
+            <input type="number" class="form-control" id="idUsuario" required />
+          </div>
+          <div class="mb-3">
+            <label for="idHabitacion" class="form-label">ID de la habitación (usa 1, 2 o 3 de los datos de prueba)</label>
+            <input type="number" class="form-control" id="idHabitacion" required />
+          </div>
+          <div class="mb-3">
+            <label for="fechaEntrada" class="form-label">Fecha de entrada</label>
+            <input type="date" class="form-control" id="fechaEntrada" required />
+          </div>
+          <div class="mb-3">
+            <label for="fechaSalida" class="form-label">Fecha de salida</label>
+            <input type="date" class="form-control" id="fechaSalida" required />
+          </div>
+          <div class="mb-3">
+            <label for="precioTotal" class="form-label">Precio total</label>
+            <input type="number" class="form-control" id="precioTotal" required />
+          </div>
+          <button type="submit" class="btn btn-success">Reservar</button>
+          <a href="ver_reservas.html" class="btn btn-secondary ms-2">Volver</a>
+        </form>
+        <div id="mensaje" class="alert mt-4 d-none"></div>
       </div>
-      <div class="mb-3">
-        <label for="fechaEntrada" class="form-label">Fecha de entrada</label>
-        <input type="date" class="form-control" id="fechaEntrada" required />
-      </div>
-      <div class="mb-3">
-        <label for="fechaSalida" class="form-label">Fecha de salida</label>
-        <input type="date" class="form-control" id="fechaSalida" required />
-      </div>
-      <div class="mb-3">
-        <label for="precioTotal" class="form-label">Precio total</label>
-        <input type="number" class="form-control" id="precioTotal" required />
-      </div>
-      <button type="submit" class="btn btn-success">Reservar</button>
-      <a href="ver_reservas.html" class="btn btn-secondary ms-2">Volver</a>
-    </form>
-    <div id="mensaje" class="alert mt-4 d-none"></div>
+    </div>
   </div>
 
   <script>
@@ -70,5 +94,8 @@
         });
     });
   </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
