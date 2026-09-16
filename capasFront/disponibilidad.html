@@ -3,10 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Consultar Disponibilidad</title>
+  <title>Consultar Disponibilidad - Hotel Leyton</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="ver_reservas.html">Reservas</a></li>
+          <li class="nav-item"><a class="nav-link" href="crear_reserva.html">Nueva Reserva</a></li>
+          <li class="nav-item"><a class="nav-link active" href="disponibilidad.html">Disponibilidad</a></li>
+          <!-- Agrega aquí los links de habitaciones, usuarios, pagos y servicios cuando estén listos -->
+        </ul>
+      </div>
+      <a class="navbar-brand fw-bold fs-4 ms-auto" href="index.html">🏨 Leyton</a>
+    </div>
+  </nav>
+
   <div class="container mt-5">
     <div class="card shadow">
       <div class="card-header bg-info text-white">
@@ -38,11 +56,10 @@
                   <th>Tipo</th>
                   <th>Capacidad</th>
                   <th>Precio / Noche</th>
-                  <th>Estado Actual</th>
                 </tr>
               </thead>
               <tbody id="disponibles-table-body">
-                <tr><td colspan="6" class="text-center text-muted">Selecciona las fechas para consultar.</td></tr>
+                <tr><td colspan="5" class="text-center text-muted">Selecciona las fechas para consultar.</td></tr>
               </tbody>
             </table>
           </div>
@@ -66,7 +83,7 @@
           const tableBody = document.getElementById('disponibles-table-body');
           tableBody.innerHTML = '';
           if (habitaciones.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">No hay habitaciones disponibles para este rango de fechas.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">No hay habitaciones disponibles para este rango de fechas.</td></tr>';
             return;
           }
           habitaciones.forEach(h => {
@@ -77,7 +94,6 @@
               <td>${h.tipo}</td>
               <td class="text-center">${h.capacidad} pers.</td>
               <td class="text-end">$${parseFloat(h.precioNoche).toLocaleString('es-CO')}</td>
-              <td class="text-center"><span class="badge bg-success">${h.estado}</span></td>
             `;
             tableBody.appendChild(row);
           });
@@ -85,5 +101,7 @@
         .catch(err => console.error('Error al consultar disponibilidad:', err));
     });
   </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
