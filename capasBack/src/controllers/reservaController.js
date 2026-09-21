@@ -26,29 +26,54 @@ router.get('/api/reservas/disponibilidad', async (req, res) => {
     }
 });
 
+// IMPORTANTE: esta ruta genérica /:id va DESPUÉS de las rutas específicas de arriba,
+// porque ':id' hace match con CUALQUIER texto (incluido "disponibilidad") y
+// Express usa la primera ruta que coincida, en el orden en que están escritas.
+router.get('/api/reservas/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const reserva = await reservaModel.obtenerReservaPorId(id);
+        if (!reserva) {
+            return res.status(404).json({ error: "Reserva no encontrada" });
+        }
+        res.status(200).json(reserva);
+    } catch (error) {
+        console.error("Error al obtener la reserva:", error);
+        res.status(500).json({ error: "Error del servidor al obtener la reserva" });
+    }
+});
+
 router.post('/api/reservas', async (req, res) => {
     try {
-        const { fechaEntrada, fechaSalida, idUsuario, idHabitacion } = req.body;
+        const { documento, nombreCompleto, email, fechaEntrada, fechaSalida, idHabitacion } = req.body;
 
-        const habitacion = await reservaModel.obtenerHabitacionPorId(idHabitacion);
-        if (!habitacion) {
-            return res.status(404).json({ error: "Habitación no encontrada" });
+        // Validar que no lleguen campos vacíos
+        if (!documento || !nombreCompleto || !email || !fechaEntrada || !fechaSalida || !idHabitacion) {
+            return res.status(400).json({ error: "Todos los campos (datos del huésped y reserva) son obligatorios" });
         }
 
-        const noches = Math.ceil(
-            (new Date(fechaSalida) - new Date(fechaEntrada)) / (1000 * 60 * 60 * 24)
+        // Llamar a la nueva función del modelo que inserta/reutiliza el usuario y crea la reserva
+        const resultado = await reservaModel.crearReservaConUsuario(
+            documento,
+            nombreCompleto,
+            email,
+            fechaEntrada,
+            fechaSalida,
+            idHabitacion
         );
-        if (noches <= 0) {
-            return res.status(400).json({ error: "La fecha de salida debe ser posterior a la de entrada" });
-        }
 
-        const precioTotal = noches * Number(habitacion.precioNoche);
-
-        await reservaModel.crearReserva(fechaEntrada, fechaSalida, precioTotal, idUsuario, idHabitacion);
-        res.status(201).json({ mensaje: "Reserva creada con éxito", precioTotal, noches });
+        res.status(201).json({
+            mensaje: "Reserva creada con éxito",
+            idReserva: resultado.idReserva,
+            precioTotal: resultado.precioTotal,
+            noches: resultado.noches
+        });
     } catch (error) {
+        if (error.codigo === 'CONFLICTO_FECHAS') {
+            return res.status(409).json({ error: error.message });
+        }
         console.error("Error al insertar reserva:", error);
-        res.status(500).json({ error: "Error del servidor al insertar la reserva" });
+        res.status(500).json({ error: error.message || "Error del servidor al insertar la reserva" });
     }
 });
 
@@ -60,6 +85,21 @@ router.put('/api/reservas/:id/cancelar', async (req, res) => {
     } catch (error) {
         console.error("Error al cancelar reserva:", error);
         res.status(500).json({ error: "Error del servidor al cancelar la reserva" });
+    }
+});
+
+// Simula lo que en el proyecto real dispararía el módulo de pagos de Johan
+router.put('/api/reservas/:id/confirmar', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await reservaModel.confirmarReserva(id);
+        if (result.affectedRows === 0) {
+            return res.status(409).json({ error: "La reserva no está Pendiente, no se puede confirmar" });
+        }
+        res.status(200).json({ mensaje: "Pago simulado: reserva confirmada con éxito" });
+    } catch (error) {
+        console.error("Error al confirmar reserva:", error);
+        res.status(500).json({ error: "Error del servidor al confirmar la reserva" });
     }
 });
 
